@@ -3,75 +3,37 @@
 let Rx = rxjs;
 let operators = rxjs.operators;
 
-var myBtn = document.querySelector('.myBtn');
-// var i = 0;
-// let myStream = new Rx.Observable(observer => {
-//     setInterval(() => {
-//         i++;
-//         observer.next(i);
-//     }, 1000);
-// }).pipe(
-//     operators.map(value => {
-//         return value * 2;
-//     }),
-//     operators.filter(value => {
-//         return value % 3 === 0;
-//     })
-// );
-
-const myUpperText = () => sourse => {
-    return new Rx.Observable(observer => {
-        sourse.subscribe(event => {
-            observer.next((event.target.innerText).toUpperCase());
-        })
-    });
-}
-
-let myStream = Rx.fromEvent(myBtn, 'click').pipe(myUpperText());
-
-myStream.subscribe(iterator => {
-    console.log(iterator);
+let privat = Rx.ajax.ajax({
+    url : 'https://api.privatbank.ua/p24api/pubinfo?json&exchange&coursid=3',
+    crossDomain: true,
+    createXHR: function () {
+        return new XMLHttpRequest();
+    }
 })
-// myStream.subscribe(
-//     resolve => {
-//         console.log('Next', resolve);
-//     },
-//     error => {
-//         console.log('Error', error);
-//     },
-//     complete => {
-//         console.log('Complete', complete);
-//     },
-// )
-// .unsubscribe();
+    .pipe(
+        operators.map(e => e.response)
+    );
 
-// myStream.subscribe(
-//     resolve => {
-//         console.log('Next2', resolve);
-//     },
-//     error => {
-//         console.log('Error2', error);
-//     },
-//     complete => {
-//         console.log('Complete2', complete);
-//     },
-// )
+let nasa = Rx.ajax.ajax({
+    url : 'https://api.nasa.gov/planetary/apod?api_key=NNKOjkoul8n1CH18TWA9gwngW1s1SmjESPjNoUFo',
+    crossDomain: true,
+    createXHR: function () {
+        return new XMLHttpRequest();
+    }
+})
+    .pipe(
+        operators.map(e => e.response)
+    );
 
-// let streamFromEvent = Rx.fromEvent(myBtn, 'click');
 
-// streamFromEvent.subscribe(event => {
-//     console.log(event);
-// });
+let combined = Rx.combineLatest(privat, nasa);
 
-// let myStream2 = new Rx.Observable((observer) => {
-//     //-------
-//     observer.next(false);
-// }).subscribe(resolve => {
-//     console.log(resolve);
-// })
+combined.subscribe(res => {
+        console.log(res)
+});
 
-// let mySubject = new Rx.BehaviorSubject(1);
 
-// mySubject.subscribe(data => {
-//     console.log(data);
-// });
+
+
+
+
