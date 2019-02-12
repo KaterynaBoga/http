@@ -33,11 +33,11 @@ combined.subscribe(res => {
 });
 
 // --Stream--
-const privatSource = Rx.from(privat);
+let privatSource = Rx.from(privat);
 
-const stream = privatSource.pipe(
-    operators.groupBy(e => e.base_ccy),
-
-    operators.mergeMap(group => group.pipe(operators.toArray()))
-);
+let stream = privatSource
+    .pipe(
+        operators.groupBy(e => e.base_ccy),
+        operators.mergeMap(group => group.pipe(operators.toArray()))
+    );
 stream.subscribe(val => console.log(val));
