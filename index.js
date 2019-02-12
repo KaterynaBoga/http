@@ -1,5 +1,4 @@
 'use strict';
-
 let Rx = rxjs;
 let operators = rxjs.operators;
 
@@ -12,6 +11,7 @@ let privat = Rx.ajax.ajax({
 })
     .pipe(
         operators.map(e => e.response)
+
     );
 
 let nasa = Rx.ajax.ajax({
@@ -32,8 +32,12 @@ combined.subscribe(res => {
         console.log(res)
 });
 
+// --Stream--
+const privatSource = Rx.from(privat);
 
+const stream = privatSource.pipe(
+    operators.groupBy(e => e.base_ccy),
 
-
-
-
+    operators.mergeMap(group => group.pipe(operators.toArray()))
+);
+stream.subscribe(val => console.log(val));
