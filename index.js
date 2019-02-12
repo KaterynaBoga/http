@@ -10,8 +10,9 @@ let privat = Rx.ajax.ajax({
     }
 })
     .pipe(
-        operators.map(e => e.response)
-
+        operators.map(e => e.response),
+        operators.groupBy(e => e.base_ccy),
+        operators.mergeMap(group => group.pipe(operators.toArray()))
     );
 
 let nasa = Rx.ajax.ajax({
@@ -32,12 +33,3 @@ combined.subscribe(res => {
         console.log(res)
 });
 
-// --Stream--
-let privatSource = Rx.from(privat);
-
-let stream = privatSource
-    .pipe(
-        operators.groupBy(e => e.base_ccy),
-        operators.mergeMap(group => group.pipe(operators.toArray()))
-    );
-stream.subscribe(val => console.log(val));
